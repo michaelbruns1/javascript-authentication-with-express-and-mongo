@@ -2,21 +2,21 @@ require('dotenv').config();
 var express = require('express');
 var mongoose = require('mongoose');
 var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+var MongoStore = require('connect-mongo');
 var app = express();
 
 // mongodb connection
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI, { useNewURLParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 // mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 
 // use sessions for tracking logins
 app.use(session({
-  secret: 'treehouse loves you',
+  secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: false,
-  store: new MongoStore({
+  store: MongoStore.create({
     mongooseConnection: db
   })
 }));

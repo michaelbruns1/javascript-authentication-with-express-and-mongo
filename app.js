@@ -2,13 +2,13 @@ require('dotenv').config();
 var express = require('express');
 const pug = require('pug');
 var mongoose = require('mongoose');
-var session = require('express-session');
-
+const bcrypt = require('bcrypt');
 var app = express();
 
 // mongodb connection
 mongoose.connect(process.env.MONGO_URI, { useNewURLParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
+
 // mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 

@@ -1,8 +1,9 @@
 require('dotenv').config();
 var express = require('express');
+const pug = require('pug');
 var mongoose = require('mongoose');
 var session = require('express-session');
-var MongoStore = require('connect-mongo');
+
 var app = express();
 
 // mongodb connection
@@ -12,13 +13,11 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 // use sessions for tracking logins
-app.use(session({
+var session = require('express-session');
+app.use(session( {
   secret: process.env.SESSION_SECRET,
   resave: true,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongooseConnection: db
-  })
+  saveUninitialized: false
 }));
 
 // make user ID available in templates
@@ -29,7 +28,7 @@ app.use(function (req, res, next) {
 
 // parse incoming requests
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // serve static files from /public
 app.use(express.static(__dirname + '/public'));
@@ -39,7 +38,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 
 // include routes
-var routes = require('./routes/index');
+var routes = require('./routes/index.js');
 app.use('/', routes);
 
 // catch 404 and forward to error handler

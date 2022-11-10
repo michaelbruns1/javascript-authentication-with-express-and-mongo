@@ -1,16 +1,18 @@
 require('dotenv').config();
-var express = require('express');
-const pug = require('pug');
-var mongoose = require('mongoose');
+const express = require('express');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 var app = express();
 
-// mongodb connection
-mongoose.connect(process.env.MONGO_URI, { useNewURLParser: true, useUnifiedTopology: true});
-var db = mongoose.connection;
 
-// mongo error
+// mongodb connection
+mongoose.connect(`${process.env.MOGNO_URI}`, { useNewUrlParser: true, useUnifiedTopology: true }); // connect to mongodb
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('Connected to MongoDB');
+});
+
 
 // use sessions for tracking logins
 var session = require('express-session');

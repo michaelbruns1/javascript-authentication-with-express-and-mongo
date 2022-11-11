@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+var session = require('express-session'); // npm install express-session
+const MongoStore = require('connect-mongo');
 var app = express();
 
 
 // mongodb connection
-mongoose.connect(`${process.env.MOGNO_URI}`, { useNewUrlParser: true, useUnifiedTopology: true }); // connect to mongodb
+mongoose.connect(`${process.env.MONGO_URI}`, { useNewUrlParser: true, useUnifiedTopology: true }); // connect to mongodb
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -15,11 +16,11 @@ db.once('open', function() {
 
 
 // use sessions for tracking logins
-var session = require('express-session'); // npm install express-session
 app.use(session( { 
   secret: process.env.SESSION_SECRET, // secret key
   resave: true,  // save session even if not modified
-  saveUninitialized: false // don't save unmodified session
+  saveUninitialized: false, // don't save unmodified session
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }) // store session in mongodb
 }));
 
 // make user ID available in templates
